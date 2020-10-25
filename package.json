@@ -1,18 +1,18 @@
 {
-  "name": "ufireph",
+  "name": "ufire_ise.js",
   "version": "0.0.1",
-  "description": "unofficial js impl for using a ufire ph probe",
+  "description": "unofficial js impl for using a ufire ise board with a mV probe",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/narcolepticsnowman/ufire_ph_js.git"
+    "url": "git+https://github.com/narcolepticsnowman/ufire_ise.js.git"
   },
   "author": "narcolepticsnowman",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/narcolepticsnowman/ufire_ph_js/issues"
+    "url": "https://github.com/narcolepticsnowman/ufire_ise.js/issues"
   },
-  "homepage": "https://github.com/narcolepticsnowman/ufire_ph_js#readme",
+  "homepage": "https://github.com/narcolepticsnowman/ufire_ise.js#readme",
   "dependencies": {
     "i2c-bus": "~5.2.1",
     "python-struct": "^1.1.3"
