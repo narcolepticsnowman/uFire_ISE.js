@@ -1,5 +1,5 @@
 const struct = require( 'python-struct' )
-
+const C = require('./constants')
 const { openPromisified } = require( 'i2c-bus' )
 let i2c = {}
 
@@ -18,7 +18,7 @@ module.exports = class uFire_ISE {
     //Should use software bus!
     //See https://www.ufire.co/docs/uFire_ISE/#raspberry-pi
     //and https://github.com/fivdi/i2c-bus/blob/master/doc/raspberry-pi-software-i2c.md
-    async constructor( address = ISE_PROBE_DEFAULT_ADDRESS, busNumber = 3 ) {
+    async constructor( address = C.ISE_PROBE_DEFAULT_ADDRESS, busNumber = 3 ) {
         this.address = address
         this.mV = 0
         this.tempC = 0
@@ -27,9 +27,9 @@ module.exports = class uFire_ISE {
     }
 
     async measuremV() {
-        await this.sendCommand( ISE_MEASURE_MV )
-        await sleep( ISE_MV_MEASURE_TIME )
-        this.mV = await this.readRegister( ISE_MV_REGISTER )
+        await this.sendCommand( C.ISE_MEASURE_MV )
+        await sleep( C.ISE_MV_MEASURE_TIME )
+        this.mV = await this.readRegister( C.ISE_MV_REGISTER )
         this.mV = Math.round( this.mV * 100 ) / 100
         if( !isFinite( this.mV ) ) {
             this.mV = -1
@@ -42,9 +42,9 @@ module.exports = class uFire_ISE {
     }
 
     async measureTemp() {
-        await this.sendCommand( ISE_MEASURE_TEMP )
-        await sleep( ISE_TEMP_MEASURE_TIME )
-        this.tempC = await this.readRegister( ISE_TEMP_REGISTER )
+        await this.sendCommand( C.ISE_MEASURE_TEMP )
+        await sleep( C.ISE_TEMP_MEASURE_TIME )
+        this.tempC = await this.readRegister( C.ISE_TEMP_REGISTER )
 
         if( this.tempC == -127 ) this.tempF = -127.0
         else this.tempF = this.toF( this.tempC )
@@ -53,96 +53,96 @@ module.exports = class uFire_ISE {
     }
 
     async setTemp( tempC ) {
-        await this.writeRegister( ISE_TEMP_REGISTER, tempC )
+        await this.writeRegister( C.ISE_TEMP_REGISTER, tempC )
         this.tempC = tempC
         this.tempF = this.toF( tempC )
     }
 
     async calibrateSingle( solutionmV ) {
-        await this.calibrate( ISE_CALIBRATE_SINGLE, solutionmV )
+        await this.calibrate( C.ISE_CALIBRATE_SINGLE, solutionmV )
     }
 
     async calibrateProbeLow( solutionmV ) {
-        await this.calibrate( ISE_CALIBRATE_LOW, solutionmV )
+        await this.calibrate( C.ISE_CALIBRATE_LOW, solutionmV )
     }
 
     async calibrateProbeHigh( solutionmV ) {
-        await this.calibrate( ISE_CALIBRATE_HIGH, solutionmV )
+        await this.calibrate( C.ISE_CALIBRATE_HIGH, solutionmV )
     }
 
     async calibrate( command, solutionmV ) {
-        await this.writeRegister( ISE_SOLUTION_REGISTER, solutionmV )
+        await this.writeRegister( C.ISE_SOLUTION_REGISTER, solutionmV )
         await this.sendCommand( command )
-        await sleep( ISE_MV_MEASURE_TIME )
+        await sleep( C.ISE_MV_MEASURE_TIME )
     }
 
     async getVersion() {
-        return this.readByte( ISE_VERSION_REGISTER )
+        return this.readByte( C.ISE_VERSION_REGISTER )
     }
 
     async getCalibrateOffset() {
-        return await this.readRegister( ISE_CALIBRATE_SINGLE_REGISTER )
+        return await this.readRegister( C.ISE_CALIBRATE_SINGLE_REGISTER )
     }
 
     async getCalibrateHighReference() {
-        return await this.readRegister( ISE_CALIBRATE_REFHIGH_REGISTER )
+        return await this.readRegister( C.ISE_CALIBRATE_REFHIGH_REGISTER )
     }
 
     async getCalibrateLowReference() {
-        return await this.readRegister( ISE_CALIBRATE_REFLOW_REGISTER )
+        return await this.readRegister( C.ISE_CALIBRATE_REFLOW_REGISTER )
     }
 
     async getCalibrateHighReading() {
-        return await this.readRegister( ISE_CALIBRATE_READHIGH_REGISTER )
+        return await this.readRegister( C.ISE_CALIBRATE_READHIGH_REGISTER )
     }
 
     async getCalibrateLowReading() {
-        return await this.readRegister( ISE_CALIBRATE_READLOW_REGISTER )
+        return await this.readRegister( C.ISE_CALIBRATE_READLOW_REGISTER )
     }
 
     async reset() {
-        await this.writeRegister( ISE_CALIBRATE_SINGLE_REGISTER, NaN )
-        await this.writeRegister( ISE_CALIBRATE_REFHIGH_REGISTER, NaN )
-        await this.writeRegister( ISE_CALIBRATE_REFLOW_REGISTER, NaN )
-        await this.writeRegister( ISE_CALIBRATE_READHIGH_REGISTER, NaN )
-        await this.writeRegister( ISE_CALIBRATE_READLOW_REGISTER, NaN )
+        await this.writeRegister( C.ISE_CALIBRATE_SINGLE_REGISTER, NaN )
+        await this.writeRegister( C.ISE_CALIBRATE_REFHIGH_REGISTER, NaN )
+        await this.writeRegister( C.ISE_CALIBRATE_REFLOW_REGISTER, NaN )
+        await this.writeRegister( C.ISE_CALIBRATE_READHIGH_REGISTER, NaN )
+        await this.writeRegister( C.ISE_CALIBRATE_READLOW_REGISTER, NaN )
     }
 
     async setDualPointCalibration( refLow, refHigh, readLow, readHigh ) {
-        await this.writeRegister( ISE_CALIBRATE_REFLOW_REGISTER, refLow )
-        await this.writeRegister( ISE_CALIBRATE_REFHIGH_REGISTER, refHigh )
-        await this.writeRegister( ISE_CALIBRATE_READLOW_REGISTER, readLow )
-        await this.writeRegister( ISE_CALIBRATE_READHIGH_REGISTER, readHigh )
+        await this.writeRegister( C.ISE_CALIBRATE_REFLOW_REGISTER, refLow )
+        await this.writeRegister( C.ISE_CALIBRATE_REFHIGH_REGISTER, refHigh )
+        await this.writeRegister( C.ISE_CALIBRATE_READLOW_REGISTER, readLow )
+        await this.writeRegister( C.ISE_CALIBRATE_READHIGH_REGISTER, readHigh )
     }
 
     async setI2CAddress( i2cAddress ) {
         if( i2cAddress >= 1 && i2cAddress <= 127 ) {
-            await this.writeRegister( ISE_SOLUTION_REGISTER, i2cAddress )
-            await this.sendCommand( ISE_I2C )
+            await this.writeRegister( C.ISE_SOLUTION_REGISTER, i2cAddress )
+            await this.sendCommand( C.ISE_I2C )
             this.address = i2cAddress
         }
     }
 
     async useTemperatureCompensation( b ) {
-        let configBits = this.readByte( ISE_CONFIG_REGISTER )
-        configBits = this.bitSet( configBits, ISE_TEMP_COMPENSATION_CONFIG_BIT, b )
-        await this.writeRegister( ISE_CONFIG_REGISTER, configBits )
+        let configBits = this.readByte( C.ISE_CONFIG_REGISTER )
+        configBits = this.bitSet( configBits, C.ISE_TEMP_COMPENSATION_CONFIG_BIT, b )
+        await this.writeRegister( C.ISE_CONFIG_REGISTER, configBits )
     }
 
     async readEEPROM( address ) {
-        await this.writeRegister( ISE_SOLUTION_REGISTER, parseInt( address ) )
-        await this.sendCommand( ISE_MEMORY_READ )
-        return await this.readRegister( ISE_BUFFER_REGISTER )
+        await this.writeRegister( C.ISE_SOLUTION_REGISTER, parseInt( address ) )
+        await this.sendCommand( C.ISE_MEMORY_READ )
+        return await this.readRegister( C.ISE_BUFFER_REGISTER )
     }
 
     async writeEEPROM( address, value ) {
-        await this.writeRegister( ISE_SOLUTION_REGISTER, parseInt( address ) )
-        await this.writeRegister( ISE_BUFFER_REGISTER, parseFloat( value ) )
-        await this.sendCommand( ISE_MEMORY_WRITE )
+        await this.writeRegister( C.ISE_SOLUTION_REGISTER, parseInt( address ) )
+        await this.writeRegister( C.ISE_BUFFER_REGISTER, parseFloat( value ) )
+        await this.sendCommand( C.ISE_MEMORY_WRITE )
     }
 
     async getFirmware() {
-        return await this.readByte( ISE_FW_VERSION_REGISTER )
+        return await this.readByte( C.ISE_FW_VERSION_REGISTER )
     }
 
     bitSet( v, index, x ) {
@@ -160,7 +160,7 @@ module.exports = class uFire_ISE {
 
 
     async sendCommand( command ) {
-        await this.i2c.writeByte( this.address, ISE_TASK_REGISTER, command )
+        await this.i2c.writeByte( this.address, C.ISE_TASK_REGISTER, command )
         await sleep( 10 )
     }
 

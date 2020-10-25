@@ -1,5 +1,5 @@
 const uFire_ISE = require( './uFire_ISE.js' )
-
+const C = require('./constants')
 const PROBE_MV_TO_PH = 59.2
 const TEMP_CORRECTION_FACTOR = 0.03
 
@@ -8,7 +8,7 @@ module.exports = class uFire_PH extends uFire_ISE {
     //Should use software bus!
     //See https://www.ufire.co/docs/uFire_ISE/#raspberry-pi
     //and https://github.com/fivdi/i2c-bus/blob/master/doc/raspberry-pi-software-i2c.md
-    constructor( address = ISE_PROBE_DEFAULT_ADDRESS, busNumber = 3 ) {
+    constructor( address = C.ISE_PROBE_DEFAULT_ADDRESS, busNumber = 3 ) {
         super( address, busNumber )
         this.pH = 0
         this.pOH = 0
@@ -58,19 +58,19 @@ module.exports = class uFire_PH extends uFire_ISE {
     }
 
     async getCalibrateHighReference() {
-        return this.mVtopH( await this.readRegister( ISE_CALIBRATE_REFHIGH_REGISTER ) )
+        return this.mVtopH( await this.readRegister( C.ISE_CALIBRATE_REFHIGH_REGISTER ) )
     }
 
     async getCalibrateLowReference() {
-        return this.mVtopH( await this.readRegister( ISE_CALIBRATE_REFLOW_REGISTER ) )
+        return this.mVtopH( await this.readRegister( C.ISE_CALIBRATE_REFLOW_REGISTER ) )
     }
 
     async getCalibrateHighReading() {
-        return this.mVtopH( await this.readRegister( ISE_CALIBRATE_READHIGH_REGISTER ) )
+        return this.mVtopH( await this.readRegister( C.ISE_CALIBRATE_READHIGH_REGISTER ) )
     }
 
     async getCalibrateLowReading() {
-        return this.mVtopH( await this.readRegister( ISE_CALIBRATE_READLOW_REGISTER ) )
+        return this.mVtopH( await this.readRegister( C.ISE_CALIBRATE_READLOW_REGISTER ) )
     }
 
     pHtomV( pH ) {

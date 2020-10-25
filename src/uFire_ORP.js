@@ -1,5 +1,5 @@
 const uFire_ISE = require( './uFire_ISE.js' )
-
+const C = require('./constants')
 const POTENTIAL_REGISTER_ADDRESS = 100
 
 module.exports = class uFire_PH extends uFire_ISE {
@@ -7,7 +7,7 @@ module.exports = class uFire_PH extends uFire_ISE {
     //Should use software bus!
     //See https://www.ufire.co/docs/uFire_ISE/#raspberry-pi
     //and https://github.com/fivdi/i2c-bus/blob/master/doc/raspberry-pi-software-i2c.md
-    constructor( address = ISE_PROBE_DEFAULT_ADDRESS, busNumber = 3 ) {
+    constructor( address = C.ISE_PROBE_DEFAULT_ADDRESS, busNumber = 3 ) {
         super( address, busNumber )
         this.ORP = 0
         this.Eh = 0
