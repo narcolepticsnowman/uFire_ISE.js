@@ -1,6 +1,15 @@
 {
   "name": "ufire_ise.js",
   "version": "0.0.1",
+  "keywords": [
+    "ufire",
+    "probe",
+    "ise",
+    "isolated",
+    "ph",
+    "orp",
+    "mv"
+  ],
   "description": "unofficial js impl for using a ufire ise board with a mV probe",
   "main": "index.js",
   "repository": {
