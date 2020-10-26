@@ -1,5 +1,5 @@
 const struct = require( 'python-struct' )
-const C = require('./constants')
+const C = require( './constants' )
 const { openPromisified } = require( 'i2c-bus' )
 let i2c = {}
 
@@ -18,12 +18,12 @@ module.exports = class uFire_ISE {
     //Should use software bus!
     //See https://www.ufire.co/docs/uFire_ISE/#raspberry-pi
     //and https://github.com/fivdi/i2c-bus/blob/master/doc/raspberry-pi-software-i2c.md
-    async constructor( address = C.ISE_PROBE_DEFAULT_ADDRESS, busNumber = 3 ) {
+    constructor( address = C.ISE_PROBE_DEFAULT_ADDRESS, busNumber = 3 ) {
         this.address = address
         this.mV = 0
         this.tempC = 0
         this.tempF = 0
-        this.i2c = await getBus( busNumber )
+        getBus( busNumber ).then( bus => this.i2c = bus )
     }
 
     async measuremV() {
