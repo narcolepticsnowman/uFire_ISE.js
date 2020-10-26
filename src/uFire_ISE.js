@@ -184,7 +184,7 @@ module.exports = class uFire_ISE {
             this.i2c.receiveByteSync( this.address ),
             this.i2c.receiveByteSync( this.address )
         ]
-        let byteString = received.map( i=>String.fromCharCode( i)).join( '')
+        let byteString = received.map( i => String.fromCharCode( i ) ).join( '' )
         let data = Buffer.from( byteString )
         console.log( 'got data', received, byteString, data, JSON.stringify( data, null, ' ' ) )
         let f = struct.unpack( 'f', data )[ 0 ]
@@ -209,6 +209,9 @@ module.exports = class uFire_ISE {
     }
 
     roundTotalDigits( x, digits = 7 ) {
-        return x.toFixed( digits - this.magnitude( x ) )
+        digits -= this.magnitude( x )
+        if(digits < 0) digits = 0
+        if(digits > 100 ) digits = 100
+        return x.toFixed( Math.trunc(digits) )
     }
 }
