@@ -11,7 +11,8 @@ function getBus( busNumber ) {
     }
     return i2c[ busNumber ] = openSync( busNumber )
 }
-
+const padByte = value => value.length === 2 ? value : '0'+value
+const toHexByte = value=> padByte(Number(value).toString(16))
 
 module.exports = class uFire_ISE {
 
@@ -179,14 +180,14 @@ module.exports = class uFire_ISE {
         await this.changeRegister( register )
 
         let received = [
-            this.i2c.receiveByteSync( this.address ),
-            this.i2c.receiveByteSync( this.address ),
-            this.i2c.receiveByteSync( this.address ),
-            this.i2c.receiveByteSync( this.address )
-        ]
-        let byteString = received.map( i =>  Number(i).toString(16) ).join( '' )
-        let data = Buffer.from( byteString, 'hex' )
-        console.log( 'got data', received, byteString, data, JSON.stringify( data, null, ' ' ) )
+            toHexByte(this.i2c.receiveByteSync( this.address )),
+            toHexByte(this.i2c.receiveByteSync( this.address )),
+            toHexByte(this.i2c.receiveByteSync( this.address )),
+            toHexByte(this.i2c.receiveByteSync( this.address ))
+        ].join()
+
+        let data = Buffer.from( received, 'hex' )
+        console.log( 'got data', received, JSON.stringify( data, null, ' ' ) )
         let f = struct.unpack( 'f', data )[ 0 ]
         return this.roundTotalDigits( f )
     }
