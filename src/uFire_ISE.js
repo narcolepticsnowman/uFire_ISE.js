@@ -25,6 +25,7 @@ module.exports = class uFire_ISE {
         this.tempF = 0
 
         this.i2c = getBus(busNumber)
+        console.log('I2c Bus', this.i2c)
     }
 
     async measuremV() {
