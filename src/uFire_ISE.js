@@ -178,7 +178,9 @@ module.exports = class uFire_ISE {
 
     async readRegister( register ) {
         await this.changeRegister( register )
-        let data = await Promise.all( Array( 4 ).map( () => this.i2c().then( i2c => i2c.receiveByte( this.address ) ) ) )
+        let i2c = await this.i2c()
+        let data = Array( 4 ).map( () => i2c.receiveByte( this.address ) )
+        console.log('got data', data, JSON.stringify(data, null, ' '))
         let f = struct.unpack( 'f', data )[ 0 ]
         return this.roundTotalDigits( f )
     }
