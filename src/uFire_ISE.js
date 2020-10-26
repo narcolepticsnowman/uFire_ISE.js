@@ -27,7 +27,7 @@ module.exports = class uFire_ISE {
     }
 
     async i2c() {
-        await getBus( this.busNumber )
+        return await getBus( this.busNumber )
     }
 
     async measuremV() {
