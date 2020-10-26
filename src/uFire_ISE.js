@@ -5,7 +5,7 @@ let i2c = {}
 
 const sleep = ( ms ) => new Promise( res => setTimeout( res, ms ) )
 
-async function getBus( busNumber ) {
+function getBus( busNumber ) {
     if( i2c[ busNumber ] ) {
         return i2c[ busNumber ]
     }
