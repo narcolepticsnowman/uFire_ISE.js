@@ -23,7 +23,11 @@ module.exports = class uFire_ISE {
         this.mV = 0
         this.tempC = 0
         this.tempF = 0
-        getBus( busNumber ).then( bus => this.i2c = bus )
+        this.busNumber = busNumber
+    }
+
+    async i2c() {
+        await getBus( this.busNumber )
     }
 
     async measuremV() {
@@ -154,13 +158,13 @@ module.exports = class uFire_ISE {
     }
 
     async changeRegister( r ) {
-        await this.i2c.sendByte( this.address, r )
+        await ( await this.i2c() ).sendByte( this.address, r )
         await sleep( 10 )
     }
 
 
     async sendCommand( command ) {
-        await this.i2c.writeByte( this.address, C.ISE_TASK_REGISTER, command )
+        await ( await this.i2c() ).writeByte( this.address, C.ISE_TASK_REGISTER, command )
         await sleep( 10 )
     }
 
@@ -168,26 +172,26 @@ module.exports = class uFire_ISE {
         let n = this.roundTotalDigits( f )
         let data = struct.pack( 'f', n )
         await this.changeRegister( register )
-        await this.i2c.writeI2cBlock( this.address, register, data.length, data )
+        await ( await this.i2c() ).writeI2cBlock( this.address, register, data.length, data )
         await sleep( 10 )
     }
 
     async readRegister( register ) {
         await this.changeRegister( register )
-        let data = await Promise.all( Array( 4 ).map( () => this.i2c.receiveByte( this.address ) ) )
+        let data = await Promise.all( Array( 4 ).map( () => this.i2c().then( i2c => i2c.receiveByte( this.address ) ) ) )
         let f = struct.unpack( 'f', data )[ 0 ]
         return this.roundTotalDigits( f )
     }
 
     async writeByte( register, value ) {
-        await this.i2c.writeByte( register, value )
+        await ( await this.i2c() ).writeByte( register, value )
         await sleep( 10 )
     }
 
     async readByte( register ) {
         await this.changeRegister( register )
         await sleep( 10 )
-        return this.i2c.receiveByte( this.address )
+        return ( await this.i2c() ).receiveByte( this.address )
     }
 
     magnitude( x ) {
