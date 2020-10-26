@@ -184,8 +184,8 @@ module.exports = class uFire_ISE {
             this.i2c.receiveByteSync( this.address ),
             this.i2c.receiveByteSync( this.address )
         ]
-        let byteString = received.map( i => String.fromCharCode( i ) ).join( '' )
-        let data = Buffer.from( byteString )
+        let byteString = received.map( i =>  Number(i).toString(16) ).join( '' )
+        let data = Buffer.from( byteString, 'hex' )
         console.log( 'got data', received, byteString, data, JSON.stringify( data, null, ' ' ) )
         let f = struct.unpack( 'f', data )[ 0 ]
         return this.roundTotalDigits( f )
