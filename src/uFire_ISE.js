@@ -1,6 +1,6 @@
 const struct = require( 'python-struct' )
 const C = require( './constants' )
-const { openPromisified } = require( 'i2c-bus' )
+const { openSync } = require( 'i2c-bus' )
 let i2c = {}
 
 const sleep = ( ms ) => new Promise( res => setTimeout( res, ms ) )
@@ -9,7 +9,7 @@ async function getBus( busNumber ) {
     if( i2c[ busNumber ] ) {
         return i2c[ busNumber ]
     }
-    return i2c[ busNumber ] = await openPromisified( busNumber )
+    return i2c[ busNumber ] = openSync( busNumber )
 }
 
 
@@ -23,11 +23,8 @@ module.exports = class uFire_ISE {
         this.mV = 0
         this.tempC = 0
         this.tempF = 0
-        this.busNumber = busNumber
-    }
 
-    async i2c() {
-        return await getBus( this.busNumber )
+        this.i2c = getBus(busNumber)
     }
 
     async measuremV() {
@@ -158,42 +155,42 @@ module.exports = class uFire_ISE {
     }
 
     async changeRegister( r ) {
-        await ( await this.i2c() ).sendByte( this.address, r )
+        await this.i2c.sendByteSync( this.address, r )
         await sleep( 10 )
     }
 
 
     async sendCommand( command ) {
-        await ( await this.i2c() ).writeByte( this.address, C.ISE_TASK_REGISTER, command )
+        await this.i2c.writeByteSync( this.address, C.ISE_TASK_REGISTER, command )
         await sleep( 10 )
     }
 
     async writeRegister( register, f ) {
         let n = this.roundTotalDigits( f )
         let data = struct.pack( 'f', n )
+        console.log('Writing packed struct', data, JSON.stringify(data))
         await this.changeRegister( register )
-        await ( await this.i2c() ).writeI2cBlock( this.address, register, data.length, data )
+        await this.i2c.writeI2cBlockSync( this.address, register, data.length, data )
         await sleep( 10 )
     }
 
     async readRegister( register ) {
         await this.changeRegister( register )
-        let i2c = await this.i2c()
-        let data = Array( 4 ).map( () => i2c.receiveByte( this.address ) )
+        let data = Array( 4 ).map( () => this.i2c.receiveByteSync( this.address ) )
         console.log('got data', data, JSON.stringify(data, null, ' '))
         let f = struct.unpack( 'f', data )[ 0 ]
         return this.roundTotalDigits( f )
     }
 
     async writeByte( register, value ) {
-        await ( await this.i2c() ).writeByte( register, value )
+        this.i2c.writeByteSync( register, value )
         await sleep( 10 )
     }
 
     async readByte( register ) {
         await this.changeRegister( register )
         await sleep( 10 )
-        return ( await this.i2c() ).receiveByte( this.address )
+        return this.i2c.receiveByteSync( this.address )
     }
 
     magnitude( x ) {
