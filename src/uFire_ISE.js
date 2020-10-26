@@ -24,8 +24,8 @@ module.exports = class uFire_ISE {
         this.tempC = 0
         this.tempF = 0
 
-        this.i2c = getBus(busNumber)
-        console.log('I2c Bus', this.i2c)
+        this.i2c = getBus( busNumber )
+        console.log( 'I2c Bus', this.i2c )
     }
 
     async measuremV() {
@@ -169,7 +169,7 @@ module.exports = class uFire_ISE {
     async writeRegister( register, f ) {
         let n = this.roundTotalDigits( f )
         let data = struct.pack( 'f', n )
-        console.log('Writing packed struct', data, JSON.stringify(data))
+        console.log( 'Writing packed struct', data, JSON.stringify( data ) )
         await this.changeRegister( register )
         await this.i2c.writeI2cBlockSync( this.address, register, data.length, data )
         await sleep( 10 )
@@ -177,8 +177,13 @@ module.exports = class uFire_ISE {
 
     async readRegister( register ) {
         await this.changeRegister( register )
-        let data = Array( 4 ).map( () => this.i2c.receiveByteSync( this.address ) )
-        console.log('got data', data, JSON.stringify(data, null, ' '))
+        let data = [
+            this.i2c.receiveByteSync( this.address ),
+            this.i2c.receiveByteSync( this.address ),
+            this.i2c.receiveByteSync( this.address ),
+            this.i2c.receiveByteSync( this.address )
+        ]
+        console.log( 'got data', data, JSON.stringify( data, null, ' ' ) )
         let f = struct.unpack( 'f', data )[ 0 ]
         return this.roundTotalDigits( f )
     }
