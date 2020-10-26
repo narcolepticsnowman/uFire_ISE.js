@@ -177,13 +177,17 @@ module.exports = class uFire_ISE {
 
     async readRegister( register ) {
         await this.changeRegister( register )
-        let data = [
-            this.i2c.receiveByteSync( this.address ),
-            this.i2c.receiveByteSync( this.address ),
-            this.i2c.receiveByteSync( this.address ),
-            this.i2c.receiveByteSync( this.address )
-        ]
-        console.log( 'got data', data, JSON.stringify( data, null, ' ' ) )
+
+        let receivedBytes = Array( 4 ).map( () => String.fromCharCode( this.i2c.receiveByteSync( this.address ) ) ).join( '' )
+        let data = Buffer.from( receivedBytes )
+
+        // let data = [
+        //     this.i2c.receiveByteSync( this.address ),
+        //     this.i2c.receiveByteSync( this.address ),
+        //     this.i2c.receiveByteSync( this.address ),
+        //     this.i2c.receiveByteSync( this.address )
+        // ]
+        console.log( 'got data', receivedBytes, data, JSON.stringify( data, null, ' ' ) )
         let f = struct.unpack( 'f', data )[ 0 ]
         return this.roundTotalDigits( f )
     }
