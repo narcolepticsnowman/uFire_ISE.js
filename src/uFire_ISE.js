@@ -184,7 +184,7 @@ module.exports = class uFire_ISE {
             toHexByte(this.i2c.receiveByteSync( this.address )),
             toHexByte(this.i2c.receiveByteSync( this.address )),
             toHexByte(this.i2c.receiveByteSync( this.address ))
-        ].join()
+        ].join('')
 
         let data = Buffer.from( received, 'hex' )
         console.log( 'got data', received, JSON.stringify( data, null, ' ' ) )
