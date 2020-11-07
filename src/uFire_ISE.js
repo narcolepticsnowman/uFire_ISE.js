@@ -190,11 +190,6 @@ module.exports = class uFire_ISE {
         return this.roundTotalDigits( f )
     }
 
-    async writeByte( register, value ) {
-        this.i2c.writeByteSync( register, value )
-        await sleep( 10 )
-    }
-
     async readByte( register ) {
         await this.changeRegister( register )
         await sleep( 10 )
